@@ -1,0 +1,172 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>AI-Assisted Text Classification API - Sandipan Das</title>
+  <style>
+    @page { size: A4; margin: 0; }
+    * { box-sizing: border-box; }
+    body { margin: 0; color: #17211d; background: #e9ede7; font-family: Arial, sans-serif; }
+    .page { width: 210mm; min-height: 297mm; padding: 18mm; margin: 0 auto; position: relative; overflow: hidden; background: #f7f6f0; page-break-after: always; }
+    .page:last-child { page-break-after: auto; }
+    .page:before { content: ""; position: absolute; width: 110mm; height: 110mm; border-radius: 50%; background: radial-gradient(circle, rgba(199,132,39,.17), transparent 68%); top: -45mm; right: -30mm; }
+    .topline { display: flex; justify-content: space-between; align-items: center; position: relative; z-index: 1; }
+    .brand { display: flex; align-items: center; gap: 10px; font-weight: 700; }
+    .mark { width: 36px; height: 36px; display: grid; place-items: center; border-radius: 10px; color: white; background: #213d34; }
+    .meta { color: #68736e; font-size: 10px; letter-spacing: .08em; text-transform: uppercase; }
+    .eyebrow { margin-top: 37mm; color: #a2681d; font-size: 11px; font-weight: 700; letter-spacing: .16em; text-transform: uppercase; }
+    h1 { max-width: 165mm; margin: 8mm 0 6mm; font-size: 48px; line-height: .98; letter-spacing: -.055em; }
+    h1 span { color: #bd7923; }
+    .lead { max-width: 150mm; color: #5d6862; font-size: 17px; line-height: 1.65; }
+    .hero-card { margin-top: 18mm; padding: 11mm; border-radius: 18px; color: white; background: #213d34; box-shadow: 0 18px 40px rgba(31,53,45,.18); }
+    .hero-card p { color: #cad5d0; line-height: 1.6; margin: 3mm 0 0; }
+    .metrics { display: grid; grid-template-columns: repeat(3,1fr); gap: 5mm; margin-top: 9mm; }
+    .metric { padding-top: 5mm; border-top: 1px solid rgba(255,255,255,.18); }
+    .metric b { display: block; font-size: 23px; color: #e6b05e; }
+    .metric span { font-size: 10px; color: #b9c6c0; }
+    .links { margin-top: 12mm; display: grid; gap: 3mm; }
+    .links a { color: #213d34; font-size: 11px; text-decoration: none; overflow-wrap: anywhere; }
+    .links b { display: inline-block; width: 25mm; color: #8a938e; font-size: 9px; text-transform: uppercase; letter-spacing: .08em; }
+    .footer { position: absolute; bottom: 11mm; left: 18mm; right: 18mm; display: flex; justify-content: space-between; color: #87908b; font-size: 9px; }
+    h2 { margin: 18mm 0 3mm; font-size: 31px; letter-spacing: -.04em; }
+    .sub { margin: 0 0 10mm; color: #68736e; line-height: 1.55; }
+    .flow { display: grid; grid-template-columns: repeat(4,1fr); gap: 4mm; align-items: stretch; }
+    .step { min-height: 39mm; padding: 6mm; border: 1px solid #d8ddd7; border-radius: 13px; background: rgba(255,255,255,.72); }
+    .step i { width: 8mm; height: 8mm; display: grid; place-items: center; border-radius: 50%; background: #dce6a9; color: #25332d; font-style: normal; font-size: 10px; font-weight: 700; }
+    .step h3 { margin: 6mm 0 2mm; font-size: 13px; }
+    .step p { margin: 0; color: #68736e; font-size: 10px; line-height: 1.5; }
+    .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6mm; margin-top: 10mm; }
+    .card { padding: 7mm; border-radius: 14px; background: #fff; border: 1px solid #dfe3de; }
+    .card.dark { color: white; background: #213d34; border: 0; }
+    .card h3 { margin: 0 0 4mm; font-size: 15px; }
+    .card p, .card li { color: #68736e; font-size: 10.5px; line-height: 1.6; }
+    .card.dark p, .card.dark li { color: #cad5d0; }
+    ul { margin: 0; padding-left: 5mm; }
+    pre { margin: 4mm 0 0; padding: 5mm; border-radius: 10px; color: #dce7e1; background: #101815; font: 9.5px/1.6 Consolas, monospace; white-space: pre-wrap; }
+    .response { color: #e9bd70; }
+    .stack { display: flex; flex-wrap: wrap; gap: 2mm; margin-top: 4mm; }
+    .stack span { padding: 2mm 3mm; border-radius: 99px; color: #31413a; background: #e5e9e2; font-size: 9px; font-weight: 700; }
+    .checklist { display: grid; grid-template-columns: 1fr 1fr; gap: 4mm 8mm; margin-top: 8mm; }
+    .check { display: flex; gap: 3mm; align-items: flex-start; padding: 4mm 0; border-bottom: 1px solid #dce1dc; }
+    .check b { flex: none; width: 6mm; height: 6mm; display: grid; place-items: center; border-radius: 50%; background: #dce6a9; font-size: 9px; }
+    .check span { font-size: 10.5px; line-height: 1.45; }
+    .note { margin-top: 9mm; padding: 6mm; border-left: 3px solid #bd7923; background: #f2e7d3; color: #5c5141; font-size: 10px; line-height: 1.6; }
+  </style>
+</head>
+<body>
+  <section class="page">
+    <div class="topline"><div class="brand"><span class="mark">SD</span> Sandipan Das</div><span class="meta">Technical Assignment</span></div>
+    <p class="eyebrow">AI-assisted backend engineering</p>
+    <h1>Text classification,<br><span>built for integration.</span></h1>
+    <p class="lead">A production-ready MERN service that classifies customer messages as Complaint, Query, Feedback, or Other and returns a validated confidence score.</p>
+    <div class="hero-card">
+      <strong>Solution overview</strong>
+      <p>The application combines a focused REST API, local LLM inference through Ollama, optional MongoDB persistence, robust output validation, and a responsive React interface for demonstration.</p>
+      <div class="metrics"><div class="metric"><b>4</b><span>Supported categories</span></div><div class="metric"><b>1</b><span>Primary POST endpoint</span></div><div class="metric"><b>3/3</b><span>Automated tests passing</span></div></div>
+    </div>
+    <div class="links">
+      <a href="https://github.com/sandipan-das-sd/AI-Assisted-Text-Classification-API"><b>GitHub</b>github.com/sandipan-das-sd/AI-Assisted-Text-Classification-API</a>
+      <a href="https://ai-assisted-text-classification-api.vercel.app"><b>Live UI</b>ai-assisted-text-classification-api.vercel.app</a>
+      <a href="https://ai-assisted-text-classification-api-delta.vercel.app/api/health"><b>API Health</b>ai-assisted-text-classification-api-delta.vercel.app/api/health</a>
+    </div>
+    <div class="footer"><span>Prepared for Indus Net Technologies Limited (INT.)</span><span>01</span></div>
+  </section>
+
+  <section class="page">
+    <div class="topline"><div class="brand"><span class="mark">SD</span> Solution Architecture</div><span class="meta">How it works</span></div>
+    <h2>From message to meaningful category.</h2>
+    <p class="sub">The service keeps routing, request handling, model communication, validation, and persistence separated for maintainability and testing.</p>
+    <div class="flow">
+      <div class="step"><i>1</i><h3>React client</h3><p>Collects customer text and sends a JSON request.</p></div>
+      <div class="step"><i>2</i><h3>Express API</h3><p>Validates the request and delegates classification.</p></div>
+      <div class="step"><i>3</i><h3>Ollama LLM</h3><p>Returns a category and confidence in strict JSON.</p></div>
+      <div class="step"><i>4</i><h3>MongoDB</h3><p>Optionally stores successful results for history.</p></div>
+    </div>
+    <div class="grid">
+      <div class="card dark">
+        <h3>API contract</h3>
+        <pre>POST /api/classify
+Content-Type: application/json
+
+{
+  "text": "My order arrived damaged."
+}
+
+<span class="response">{
+  "category": "Complaint",
+  "confidence": 0.96
+}</span></pre>
+      </div>
+      <div class="card">
+        <h3>Classification definitions</h3>
+        <ul>
+          <li><b>Complaint:</b> dissatisfaction or a reported problem.</li>
+          <li><b>Query:</b> a question or request for information.</li>
+          <li><b>Feedback:</b> an opinion, suggestion, praise, or review.</li>
+          <li><b>Other:</b> text outside the defined categories.</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>Reliability safeguards</h3>
+        <ul>
+          <li>Rejects empty input and text over 5,000 characters.</li>
+          <li>Validates AI categories against an allow-list.</li>
+          <li>Clamps confidence between 0 and 1.</li>
+          <li>Uses a deterministic temperature of 0.</li>
+          <li>Returns consistent JSON errors.</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>Technology stack</h3>
+        <div class="stack"><span>React</span><span>Vite</span><span>Node.js</span><span>Express</span><span>MongoDB</span><span>Mongoose</span><span>Ollama</span><span>LangChain</span><span>Vercel</span></div>
+        <p>The API also works without MongoDB; classification continues while persistence is skipped.</p>
+      </div>
+    </div>
+    <div class="footer"><span>AI-Assisted Text Classification API</span><span>02</span></div>
+  </section>
+
+  <section class="page">
+    <div class="topline"><div class="brand"><span class="mark">SD</span> Delivery & Verification</div><span class="meta">Ready to review</span></div>
+    <h2>Implementation highlights.</h2>
+    <p class="sub">The submission covers the requested endpoint, layered backend structure, minimal error handling, AI integration, documentation, and optional Postman support.</p>
+    <div class="checklist">
+      <div class="check"><b>✓</b><span><strong>Single POST endpoint</strong><br>`/api/classify` accepts a text string.</span></div>
+      <div class="check"><b>✓</b><span><strong>AI classification</strong><br>Ollama runs the `llama3.2:3b` model.</span></div>
+      <div class="check"><b>✓</b><span><strong>Structured response</strong><br>Category and confidence are normalized.</span></div>
+      <div class="check"><b>✓</b><span><strong>Layered backend</strong><br>Routes, controllers, services, and models.</span></div>
+      <div class="check"><b>✓</b><span><strong>Error handling</strong><br>400, 404, and 500 JSON responses.</span></div>
+      <div class="check"><b>✓</b><span><strong>Documentation</strong><br>README includes setup and API examples.</span></div>
+      <div class="check"><b>✓</b><span><strong>Postman collection</strong><br>Ready-to-run health and classify requests.</span></div>
+      <div class="check"><b>✓</b><span><strong>Automated tests</strong><br>Three API/service tests are passing.</span></div>
+    </div>
+    <div class="grid">
+      <div class="card">
+        <h3>Run locally</h3>
+        <pre>ollama pull llama3.2:3b
+
+cd server
+npm install
+copy .env.example .env
+npm start
+
+cd client
+npm install
+npm run dev</pre>
+      </div>
+      <div class="card dark">
+        <h3>Repository contents</h3>
+        <ul>
+          <li>Complete frontend and backend source</li>
+          <li>Environment variable examples</li>
+          <li>Automated API tests</li>
+          <li>Deployment configuration</li>
+          <li>Postman collection</li>
+          <li>Detailed README documentation</li>
+        </ul>
+      </div>
+    </div>
+    <div class="note"><strong>Deployment note:</strong> The demonstration uses a temporary secure tunnel to reach local Ollama. For a permanent production environment, the model should run behind an authenticated cloud endpoint or be replaced with a managed AI provider.</div>
+    <div class="footer"><span>Sandipan Das · Full Stack Developer</span><span>03</span></div>
+  </section>
+</body>
+</html>
