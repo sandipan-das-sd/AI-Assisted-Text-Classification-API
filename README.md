@@ -1,29 +1,77 @@
 # AI-Assisted Text Classification API (MERN)
 
-A MERN application that sends text to a local Ollama AI model and returns one of four categories: `Complaint`, `Query`, `Feedback`, or `Other`, plus a confidence score. MongoDB is optional and stores successful classifications when configured. The React UI is a convenient API tester.
+A MERN application that classifies customer text as `Complaint`, `Query`, `Feedback`, or `Other` and returns an AI-generated confidence score. It includes a React interface, an Express REST API, optional MongoDB history, and local AI inference through Ollama.
 
-## Stack and structure
+## Live application
 
-- MongoDB + Mongoose: optional classification history
-- Express + Node.js: REST API, controller, route, service, and model layers
-- React + Vite: test interface
-- Ollama (`llama3.2:3b`): local AI classification
+- Frontend: https://ai-assisted-text-classification-api.vercel.app
+- Backend health: https://ai-assisted-text-classification-api-delta.vercel.app/api/health
+- Classification endpoint: `POST https://ai-assisted-text-classification-api-delta.vercel.app/api/classify`
+
+The hosted backend currently reaches Ollama through a temporary Cloudflare Quick Tunnel. The computer running Ollama and the tunnel must remain online. Quick Tunnel addresses change when restarted and are intended for demonstrations, not production.
+
+## Technology
+
+- MongoDB Atlas and Mongoose: classification history
+- Express and Node.js: REST API
+- React and Vite: frontend
+- Ollama with `llama3.2:3b`: AI classification
+- Vercel: frontend and serverless API hosting
 
 ```text
-server/src/
-  config/database.js
-  controllers/classificationController.js
-  models/Classification.js
-  routes/classificationRoutes.js
-  services/classificationService.js
+server/
+  api/index.js                         Vercel function entry
+  src/config/database.js
+  src/controllers/classificationController.js
+  src/models/Classification.js
+  src/routes/classificationRoutes.js
+  src/services/classificationService.js
 client/src/
   api.js
   main.jsx
 ```
 
-## Setup
+## API
 
-Requires Node.js 20+, [Ollama](https://ollama.com/), and optionally MongoDB.
+### Classify text
+
+```http
+POST /api/classify
+Content-Type: application/json
+```
+
+Request:
+
+```json
+{
+  "text": "My order arrived damaged."
+}
+```
+
+Response:
+
+```json
+{
+  "category": "Complaint",
+  "confidence": 0.96
+}
+```
+
+Live curl example:
+
+```bash
+curl -X POST https://ai-assisted-text-classification-api-delta.vercel.app/api/classify \
+  -H "Content-Type: application/json" \
+  -d '{"text":"Can I change my delivery address?"}'
+```
+
+The API returns HTTP `400` for invalid text, `404` for unknown routes, and `500` when classification fails. Errors use `{ "error": "message" }`.
+
+## Local setup
+
+Requirements: Node.js 20+, [Ollama](https://ollama.com/), and optionally MongoDB.
+
+Install the AI model and start the backend:
 
 ```bash
 ollama pull llama3.2:3b
@@ -33,7 +81,7 @@ copy .env.example .env
 npm start
 ```
 
-In another terminal:
+Start the frontend in another terminal:
 
 ```bash
 cd client
@@ -41,32 +89,68 @@ npm install
 npm run dev
 ```
 
-Open `http://localhost:5173`. If MongoDB is unavailable, remove/comment `MONGODB_URI`; the API still works but does not save history.
+Open `http://localhost:5173`. Without `MONGODB_URI`, classification continues to work but results are not saved.
 
-## API
+### Local backend environment
 
-`POST http://localhost:3000/api/classify`
-
-```json
-{ "text": "My order arrived damaged." }
+```env
+PORT=3000
+CORS_ORIGIN=http://localhost:5173
+OLLAMA_URL=http://127.0.0.1:11434
+OLLAMA_MODEL=llama3.2:3b
+MONGODB_URI=mongodb://127.0.0.1:27017/text-classifier
 ```
 
-Example response:
+## Vercel deployment
 
-```json
-{ "category": "Complaint", "confidence": 0.96 }
+Create two Vercel projects from this repository.
+
+### Backend project
+
+Set the Root Directory to `server` and configure:
+
+```env
+CORS_ORIGIN=https://ai-assisted-text-classification-api.vercel.app
+OLLAMA_URL=https://YOUR-TUNNEL.trycloudflare.com
+OLLAMA_MODEL=llama3.2:3b
+MONGODB_URI=mongodb+srv://USERNAME:PASSWORD@CLUSTER.mongodb.net/DATABASE?retryWrites=true&w=majority
+NODE_ENV=production
 ```
 
-curl example:
+Do not configure `PORT`; Vercel manages it. In MongoDB Atlas, allow connections from Vercel and never commit database credentials.
+
+### Frontend project
+
+Set the Root Directory to `client` and configure:
+
+```env
+VITE_API_URL=https://ai-assisted-text-classification-api-delta.vercel.app
+```
+
+Vite embeds environment variables at build time, so redeploy after changing `VITE_API_URL`.
+
+### Temporary public Ollama tunnel
+
+With Ollama already running, install `cloudflared`, then run:
+
+```cmd
+set OLLAMA_ORIGIN=http://127.0.0.1:11434
+cloudflared tunnel --protocol http2 --url %OLLAMA_ORIGIN% --http-host-header localhost:11434
+```
+
+Copy the generated HTTPS address into the backend's `OLLAMA_URL` and redeploy. Keep the terminal open. For production, use an authenticated hosted model or a secured cloud deployment instead of an unauthenticated Quick Tunnel.
+
+## How AI is used
+
+The service sends category definitions and the submitted text to Ollama, requesting strict JSON. It validates the returned category against the four supported categories. Confidence is clamped between `0` and `1`; if the model omits confidence, the API maps it to `0.75`. Temperature is set to `0` for consistent output.
+
+## Testing and Postman
+
+Run the backend tests:
 
 ```bash
-curl -X POST http://localhost:3000/api/classify -H "Content-Type: application/json" -d "{\"text\":\"Can I change my delivery address?\"}"
+cd server
+npm test
 ```
 
-Errors use `{ "error": "message" }` with HTTP 400 for invalid input, 404 for unknown routes, or 500 when classification fails. Run server tests with `npm test`.
-
-## How AI was used
-
-The service gives Ollama category definitions and requests strict JSON. The returned category is validated case-insensitively against the four allowed values. Confidence is clamped to `0–1`; if the model omits it, the API maps it to `0.75`. Temperature is `0` for consistent classifications.
-
-Import [`postman_collection.json`](./postman_collection.json) into Postman for ready-to-run health and classification requests.
+Import [`postman_collection.json`](./postman_collection.json) into Postman for health and classification requests.
